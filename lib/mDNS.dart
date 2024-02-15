@@ -7,12 +7,18 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
+import 'package:flutter_test_zeroconf/ssh.dart';
 import 'package:multicast_dns/multicast_dns.dart';
+import 'package:flutter_test_zeroconf/params.dart';
 
 Future<void> mDNS() async {
   // Parse the command line arguments.
+  final robot = Robot();
+  await robot.getMachineId(); // Call the method to retrieve the machine ID
 
-  const String name = '_wonderful._tcp.local';
+  final String name = "_${robot.machineId}._tcp.local";
   final MDnsClient client = MDnsClient();
   // Start the client with default options.
   await client.start();
@@ -24,16 +30,18 @@ Future<void> mDNS() async {
     // which will have the port and local hostname.
     // Note that duplicate messages may come through, especially if any
     // other mDNS queries are running elsewhere on the machine.
-    print(ptr);
-    // await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
-    //     ResourceRecordQuery.service(ptr.domainName))) {
-    //   print(srv);
-    //   // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
-    //   final String bundleId =
-    //       ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-    //   // print('Dart observatory instance found at '
-    //   // '${srv.target}:${srv.port} for "$bundleId".');
-    // }
+    await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+        ResourceRecordQuery.service(ptr.domainName))) {
+      final String targetHostname = srv.target;
+      final List<InternetAddress> addresses =
+          await InternetAddress.lookup(targetHostname);
+      for (var address in addresses) {
+        final String roobtIPAddress = address.address;
+        dartssh2(roobtIPAddress);
+        print(
+            'Resolved address: ${address.address} , Target:Port ${srv.target}:${srv.port} ');
+      }
+    }
   }
   client.stop();
 
