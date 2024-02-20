@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test_zeroconf/bonsoir-sd.dart';
 import 'package:flutter_test_zeroconf/mDNS.dart';
 
 void main() {
@@ -26,7 +27,7 @@ class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Show Wifiiiiii !!!!!!!!"),
+        title: const Text("Print mDNS Connection !!!!!!!!"),
       ),
       body: Align(
         alignment: Alignment.topLeft,
@@ -36,6 +37,7 @@ class MyWidget extends StatelessWidget {
             onPressed: () async {
               // handleClick(context);
               await mDNS();
+              // await bonsoirSd();
             },
             child: const Text("Click Me!!!"),
           ),

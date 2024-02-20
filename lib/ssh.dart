@@ -5,7 +5,11 @@ void dartssh2(String robotIP) async {
 
   final client = SSHClient(socket,
       username: 'peppermint', onPasswordRequest: () => "Ppmt@1234");
-
+  if (!client.isClosed) {
+    print("Connected");
+  } else {
+    print("Not Connected");
+  }
   client.close();
   await client.done;
 }

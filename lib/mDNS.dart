@@ -18,7 +18,9 @@ Future<void> mDNS() async {
   final robot = Robot();
   await robot.getMachineId(); // Call the method to retrieve the machine ID
 
-  final String name = "_${robot.machineId}._tcp.local";
+  // final String name = "_ppmt-${robot.machineId}._tcp.local";
+  const String name = "_wonderful._tcp.local";
+
   final MDnsClient client = MDnsClient();
   // Start the client with default options.
   await client.start();
@@ -26,10 +28,6 @@ Future<void> mDNS() async {
   // Get the PTR record for the service.
   await for (final PtrResourceRecord ptr in client
       .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-    // Use the domainName from the PTR record to get the SRV record,
-    // which will have the port and local hostname.
-    // Note that duplicate messages may come through, especially if any
-    // other mDNS queries are running elsewhere on the machine.
     await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
         ResourceRecordQuery.service(ptr.domainName))) {
       final String targetHostname = srv.target;
